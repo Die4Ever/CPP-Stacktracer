@@ -115,7 +115,7 @@ int main()
 {
 	BEGINFUNC;
 	vector<thread> threads;
-	for (int i = 0;i < 3;i++) {//make sure it doesn't memory leak
+	for (int i = 0;i < 30000;i++) {//make sure it doesn't memory leak
 		LOG(LogLevel::DEBUG, "starting new thread");
 		threads.emplace_back(thread(factorial, rand() % 5));
 		if (threads.size() > 100) {

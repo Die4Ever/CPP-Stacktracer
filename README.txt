@@ -3,77 +3,87 @@ threadsafe stacktracer for C++
 
 
 sample output
-thread 23776 entering
+thread 20528: DEBUG: starting new thread (line: 120)
 Stacktrace!=============
-\consoleapplication1.cpp:main():94
+\test.cpp:main():117
 =============
 
 
-thread 21904 entering
+thread 20528: DEBUG: starting new thread (line: 120)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
+\test.cpp:main():117
+--DEBUG: starting new thread (line: 120)
 =============
 
 
-thread 26128 entering
+thread 15988: DEBUG: returning 1 (line: 107)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
+\test.cpp:factorial():104
+--INFO: factorial of 1 (line: 105)
 =============
 
 
-thread 20256 entering
+thread 20528: DEBUG: starting new thread (line: 120)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
+\test.cpp:main():117
+--DEBUG: starting new thread (line: 120)
+--DEBUG: starting new thread (line: 120)
 =============
 
 
-thread 21904 entering
+thread 1372: DEBUG: returning 1 (line: 107)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
-\consoleapplication1.cpp:factorial():87
+\test.cpp:factorial():104
+--INFO: factorial of 1 (line: 105)
+\test.cpp:factorial():104
+--INFO: factorial of 2 (line: 105)
 =============
 
 
-thread 26128 entering
+thread 23548: DEBUG: returning 1 (line: 107)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
-\consoleapplication1.cpp:factorial():87
+\test.cpp:factorial():104
+--INFO: factorial of 1 (line: 105)
+\test.cpp:factorial():104
+--INFO: factorial of 2 (line: 105)
+\test.cpp:factorial():104
+--INFO: factorial of 3 (line: 105)
+\test.cpp:factorial():104
+--INFO: factorial of 4 (line: 105)
 =============
 
 
-thread 20256 exiting
+thread 1372: DEBUG: returning 2 (line: 111)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
+\test.cpp:factorial():104
+--INFO: factorial of 2 (line: 105)
 =============
 
 
-thread 21904 exiting
+thread 23548: DEBUG: returning 2 (line: 111)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
-\consoleapplication1.cpp:factorial():87
+\test.cpp:factorial():104
+--INFO: factorial of 2 (line: 105)
+\test.cpp:factorial():104
+--INFO: factorial of 3 (line: 105)
+\test.cpp:factorial():104
+--INFO: factorial of 4 (line: 105)
 =============
 
 
-thread 26128 exiting
+thread 23548: DEBUG: returning 6 (line: 111)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
-\consoleapplication1.cpp:factorial():87
+\test.cpp:factorial():104
+--INFO: factorial of 3 (line: 105)
+\test.cpp:factorial():104
+--INFO: factorial of 4 (line: 105)
 =============
 
 
-thread 21904 exiting
+thread 23548: DEBUG: returning 24 (line: 111)
 Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
+\test.cpp:factorial():104
+--INFO: factorial of 4 (line: 105)
 =============
 
-
-thread 26128 exiting
-Stacktrace!=============
-\consoleapplication1.cpp:factorial():87
-=============
-
-
-thread 23776 exiting
-Stacktrace!=============
-\consoleapplication1.cpp:main():94
-=============
+Press any key to continue . . .

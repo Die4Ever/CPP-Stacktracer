@@ -100,6 +100,8 @@ int main()
 			threads.clear();
 		}
 	}
+	for (auto &t : threads) t.join();
+	threads.clear();
     return 0;
 }
 

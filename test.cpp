@@ -1,4 +1,5 @@
 
+#include "stdafx.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -7,8 +8,11 @@
 #include <thread>
 #include <mutex>
 #include <sstream>
+#include <chrono>
+#include <array>
 using namespace std;
 
+#define self (*this)
 #ifdef WIN32
 #define __PRETTY_FUNCTION__ __FUNCTION__"()"
 #define __builtin_FUNCTION() "?"
@@ -25,7 +29,7 @@ string ToString(A a)
 }
 
 enum class LogLevel { TRACE, INFO, DEBUG, WARN, ERROR, CRIT };
-const LogLevel loglevel = LogLevel::DEBUG;
+const LogLevel loglevel = LogLevel::WARN;
 
 void PrintStackTrace(string pretext);
 
@@ -40,9 +44,12 @@ public:
 	void AddMess(LogLevel level, string s, int line)
 	{
 		const char* levels[] = { "TRACE", "INFO", "DEBUG", "WARN", "ERROR", "CRIT" };
-		string newmess = string(levels[(int)level]) + ": " + s + " (line: "+ ToString(line) +")";
-		if(level >= loglevel) PrintStackTrace(newmess);
-		mess += "--" + newmess + "\n";
+		std::ostringstream newmess;
+		newmess << "--" << levels[(int)level] << s << " (line: " << line << ")\n";
+		if(level >= loglevel) PrintStackTrace(newmess.str());
+		if (mess.length() > 2000)
+			mess = "..." + mess.substr(0, 1000) + newmess.str();
+		else mess += newmess.str();
 	}
 };
 
@@ -96,28 +103,31 @@ _DEBUGOBJ::~_DEBUGOBJ()
 #define LOG(level, message) (stacktrace.back().AddMess((level), (message), __LINE__))
 #else
 #define BEGINFUNC
+#define LOG(level, message)
 #endif
 
 int factorial(int n)
 {
 	BEGINFUNC;
-	LOG(LogLevel::INFO, "factorial of "+ToString(n));
+	//LOG(LogLevel::INFO, "factorial of "+ToString(n));
 	if (n <= 1) {
-		LOG(LogLevel::DEBUG, "returning 1");
+		//LOG(LogLevel::DEBUG, "returning 1");
 		return 1;
 	}
 	int r = n * factorial(n - 1);
-	LOG(LogLevel::DEBUG, "returning " + ToString(r));
+	//LOG(LogLevel::DEBUG, "returning " + ToString(r));
 	return r;
 }
 
 int main()
 {
 	BEGINFUNC;
+	chrono::high_resolution_clock::time_point start = chrono::high_resolution_clock::now();
+	srand(5);
 	vector<thread> threads;
-	for (int i = 0;i < 30000;i++) {//make sure it doesn't memory leak
+	for (int i = 0;i < 100;i++) {//make sure it doesn't memory leak
 		LOG(LogLevel::DEBUG, "starting new thread");
-		threads.emplace_back(thread(factorial, rand() % 5));
+		threads.emplace_back(thread(factorial, rand() % 500*5));
 		if (threads.size() > 100) {
 			for (auto &t : threads) t.join();
 			threads.clear();
@@ -125,6 +135,10 @@ int main()
 	}
 	for (auto &t : threads) t.join();
 	threads.clear();
+
+	chrono::high_resolution_clock::time_point end = chrono::high_resolution_clock::now();
+	chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(end - start);
+	std::cout << "\n\nIt took me " << time_span.count() << " seconds.\n";
 	return 0;
 }
 

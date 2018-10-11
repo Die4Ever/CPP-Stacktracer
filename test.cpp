@@ -37,6 +37,15 @@ class _DEBUGOBJBASE
 {
 protected:
 	string *mess;
+
+	_DEBUGOBJBASE(const _DEBUGOBJBASE &b)
+	{
+		File = b.File;
+		Func = b.Func;
+		Line = b.Line;
+		mess = NULL;
+	}
+
 public:
 	const char *File;
 	const char *Func;
@@ -50,25 +59,47 @@ public:
 		const char* levels[] = { "TRACE", "INFO", "DEBUG", "WARN", "ERROR", "CRIT" };
 		std::ostringstream newmess;
 		newmess << "--" << levels[(int)level] << s << " (line: " << line << ")\n";
-		if(level >= loglevel) PrintStackTrace(newmess.str());
+		if (level >= loglevel) PrintStackTrace(newmess.str());
 		if (m.length() > 2000)
 			m = "..." + m.substr(0, 1000) + newmess.str();
 		else m += newmess.str();
 	}
-	
+
 	~_DEBUGOBJBASE()
 	{
 		if (mess) delete mess;
 	}
 
-	const char *GetMess()
+	_DEBUGOBJBASE()
+	{
+		mess = NULL;
+	}
+
+	_DEBUGOBJBASE(const char *file, const char *func, int line)
+	{
+		mess = NULL;
+		File = file;
+		Func = func;
+		Line = line;
+	}
+
+	_DEBUGOBJBASE(_DEBUGOBJBASE &&b)
+	{
+		File = b.File;
+		Func = b.Func;
+		Line = b.Line;
+		mess = b.mess;
+		b.mess = NULL;
+	}
+
+	const char *GetMess() 
 	{
 		if (!mess) return "";
 		return mess->c_str();
 	}
 };
 
-class _DEBUGOBJ : public _DEBUGOBJBASE
+class _DEBUGOBJ
 {
 public:
 	_DEBUGOBJ(const char *file, const char *func, int line);
@@ -100,12 +131,8 @@ void PrintStackTrace(string pretext)
 
 _DEBUGOBJ::_DEBUGOBJ(const char *file, const char *func, int line)
 {
-	File = file;
-	Func = func;
-	Line = line;
-	mess = NULL;
-	stacktrace.push_back(*this);
-	if(LogLevel::TRACE >= loglevel) PrintStackTrace("entering");
+	stacktrace.emplace_back( _DEBUGOBJBASE(file, func, line) );
+	if (LogLevel::TRACE >= loglevel) PrintStackTrace("entering");
 }
 
 _DEBUGOBJ::~_DEBUGOBJ()

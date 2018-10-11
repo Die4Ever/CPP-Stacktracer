@@ -35,21 +35,36 @@ void PrintStackTrace(string pretext);
 
 class _DEBUGOBJBASE
 {
+protected:
+	string *mess;
 public:
 	const char *File;
 	const char *Func;
 	int Line;
-	string mess;
 
 	void AddMess(LogLevel level, string s, int line)
 	{
+		if (mess == NULL) mess = new string();
+
+		string &m = *mess;
 		const char* levels[] = { "TRACE", "INFO", "DEBUG", "WARN", "ERROR", "CRIT" };
 		std::ostringstream newmess;
 		newmess << "--" << levels[(int)level] << s << " (line: " << line << ")\n";
 		if(level >= loglevel) PrintStackTrace(newmess.str());
-		if (mess.length() > 2000)
-			mess = "..." + mess.substr(0, 1000) + newmess.str();
-		else mess += newmess.str();
+		if (m.length() > 2000)
+			m = "..." + m.substr(0, 1000) + newmess.str();
+		else m += newmess.str();
+	}
+	
+	~_DEBUGOBJBASE()
+	{
+		if (mess) delete mess;
+	}
+
+	const char *GetMess()
+	{
+		if (!mess) return "";
+		return mess->c_str();
 	}
 };
 
@@ -76,7 +91,7 @@ void PrintStackTrace(string pretext)
 		if (bslash == SIZE_MAX) bslash = 0;
 		file = file.substr(std::max(fslash, bslash));
 		cout << file << ":" << d.Func << ":" << d.Line << "\n";
-		if (d.mess.length()) cout << d.mess;
+		cout << d.GetMess();
 	}
 	cout << "=============\n\n";
 	cout.flush();
@@ -88,6 +103,7 @@ _DEBUGOBJ::_DEBUGOBJ(const char *file, const char *func, int line)
 	File = file;
 	Func = func;
 	Line = line;
+	mess = NULL;
 	stacktrace.push_back(*this);
 	if(LogLevel::TRACE >= loglevel) PrintStackTrace("entering");
 }
